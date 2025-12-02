@@ -12,11 +12,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Debug Secrets (temporary)
+      - name: Debug Secrets (temporary, safe)
         run: |
           echo "HOST: ${{ secrets.EC2_HOST }}"
           echo "USER: ${{ secrets.EC2_USER }}"
-          echo "SSH KEY Length: ${#${{ secrets.EC2_SSH_KEY }}}"
+          SSH_KEY="${{ secrets.EC2_SSH_KEY }}"
+          echo "SSH KEY Length: ${#SSH_KEY}"  # Only length, not value
 
       - name: Setup SSH Key
         uses: webfactory/ssh-agent@v0.7.0
