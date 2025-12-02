@@ -16,8 +16,9 @@ jobs:
       # Step 2: Debug secrets (SAFE PREVIEW)
       - name: Debug secrets
         run: |
-          echo "HOST: ${{ secrets.EC2_HOST }}"
+          
           echo "USERNAME: ${{ secrets.EC2_USER }}"
+          echo "HOST: ${{ secrets.EC2_HOST }}"
           echo "SSH KEY (first 10 chars): $(echo '${{ secrets.EC2_SSH_KEY }}' | cut -c1-10)..."
 
       # Step 3: Setup SSH key using secret
