@@ -9,19 +9,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout your repo
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Step 2: Setup SSH key for EC2
       - name: Setup SSH key
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
+      # Step 3: Deploy code via SSH
       - name: Deploy to EC2
         run: |
+          echo "Connecting to EC2..."
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd ${{ secrets.EC2_PATH }}
-            git pull origin main
-            npm install
+            echo "Navigating to project folder..."
+            cd ${{ secrets.EC2_PATH }} || { echo "Folder not found! Exiting."; exit 1; }
+
+            echo "Pulling latest code from GitHub..."
+            git pull origin main || { echo "Git pull failed! Exiting."; exit 1; }
+
+            echo "Installing dependencies..."
+            npm install || { echo "npm install failed! Exiting."; exit 1; }
+
+            echo "Restarting PM2 app..."
             pm2 restart ${{ secrets.PM2_APP_NAME }} || pm2 start app.js --name ${{ secrets.PM2_APP_NAME }}
+
+            echo "Saving PM2 process list..."
+            pm2 save
+
+            echo "Deployment completed successfully!"
           EOF
