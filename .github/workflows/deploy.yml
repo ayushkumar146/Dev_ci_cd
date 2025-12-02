@@ -72,7 +72,7 @@ FRoLBXTRSnnVTJV0wtY9woTTxZr/FxmdvxV4uydkQjlTmVDTHHl52BMHGezaA4aCFfZ1Hs
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@16.16.186.241<< 'EOF'
-            cd /home/ubuntu/dev/app.js|| { echo "Folder not found! Exiting."; exit 1; }
+            cd /home/ubuntu/dev || { echo "Folder not found! Exiting."; exit 1; }
 
             echo "Pulling latest code..."
             git pull origin main || { echo "Git pull failed! Exiting."; exit 1; }
