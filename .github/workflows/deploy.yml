@@ -13,77 +13,33 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Setup SSH key (directly)
+      # Step 2: Setup SSH key using secret
       - name: Setup SSH key
         uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: |
-            -----BEGIN OPENSSH PRIVATE KEY-----
-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
------END OPENSSH PRIVATE KEY-----
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
       # Step 3: Deploy to EC2
       - name: Deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@16.16.186.241<< 'EOF'
-            cd /home/ubuntu/dev || { echo "Folder not found! Exiting."; exit 1; }
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            echo "Navigating to project folder..."
+            cd ${{ secrets.EC2_PATH }} || { echo "Folder not found! Exiting."; exit 1; }
 
-            echo "Pulling latest code..."
-            git pull origin main || { echo "Git pull failed! Exiting."; exit 1; }
+            echo "Fetching latest code..."
+            git fetch --all || { echo "Git fetch failed! Exiting."; exit 1; }
+
+            echo "Resetting local code to match main branch..."
+            git reset --hard origin/main || { echo "Git reset failed! Exiting."; exit 1; }
 
             echo "Installing dependencies..."
             npm install || { echo "npm install failed! Exiting."; exit 1; }
 
             echo "Restarting PM2 app..."
-            pm2 restart app || pm2 start app.js --name app
+            pm2 restart ${{ secrets.PM2_APP_NAME }} || pm2 start app.js --name ${{ secrets.PM2_APP_NAME }}
 
+            echo "Saving PM2 process list..."
             pm2 save
+
             echo "Deployment completed successfully!"
           EOF
-
