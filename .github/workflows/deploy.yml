@@ -9,29 +9,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Debug secrets safely
       - name: Debug Secrets (temporary)
         run: |
           echo "USER: ${{ secrets.EC2_USER }}"
           SSH_KEY="${{ secrets.EC2_SSH_KEY }}"
-          echo "SSH KEY Length: ${#SSH_KEY}"  # Only length, not actual key
+          echo "SSH KEY Length: ${#SSH_KEY}"
 
-      # 3️⃣ Setup SSH agent
       - name: Setup SSH Key
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      # 4️⃣ Deploy to EC2
       - name: Deploy to EC2
         run: |
-          ssh -T -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@16.16.186.241 << EOF
+          # Assign variables to make SSH commands cleaner
+          EC2_USER="${{ secrets.EC2_USER }}"
+          EC2_PATH="${{ secrets.EC2_PATH }}"
+          PM2_APP="${{ secrets.PM2_APP_NAME }}"
+
+          ssh -T -o StrictHostKeyChecking=no $EC2_USER@16.16.186.241 << EOF
             # Navigate to project directory
-            cd ${{ secrets.EC2_PATH }} || exit 1
+            cd $EC2_PATH || exit 1
 
             # Pull latest code
             git fetch --all
@@ -41,5 +42,5 @@ jobs:
             npm install
 
             # Restart or start the app with PM2
-            pm2 restart ${{ secrets.PM2_APP_NAME }} || pm2 start app.js --name ${{ secrets.PM2_APP_NAME }}
+            pm2 restart $PM2_APP || pm2 start app.js --name $PM2_APP
 EOF
